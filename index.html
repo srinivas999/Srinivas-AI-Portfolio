@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Srinivas — UX designer portfolio" />
+    <title>Srinivas | UX Designer</title>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="site-nav" aria-label="Primary">
+        <a href="index.html" class="logo">Srinivas</a>
+        <button
+          type="button"
+          class="nav-toggle"
+          aria-expanded="false"
+          aria-controls="primary-menu"
+          aria-label="Open menu"
+        >
+          <span class="nav-toggle__lines" aria-hidden="true">
+            <span class="nav-toggle__bar"></span>
+            <span class="nav-toggle__bar"></span>
+            <span class="nav-toggle__bar"></span>
+          </span>
+        </button>
+        <div id="primary-menu" class="nav-menu">
+          <ul class="nav-links">
+            <li><a href="index.html" data-nav-link>Home</a></li>
+            <li><a href="about.html" data-nav-link>About</a></li>
+            <li><a href="projects.html" data-nav-link>Projects</a></li>
+            <li><a href="contact.html" data-nav-link>Contact</a></li>
+          </ul>
+        </div>
+      </nav>
+      <div class="nav-backdrop" aria-hidden="true"></div>
+    </header>
+
+    <main>
+      <section id="home" class="hero section" aria-label="Introduction">
+        <div class="hero__inner">
+          <h1 class="hero__title">
+            Hi, I'm Srinivas <span class="hero__title-accent">UX Designer</span>
+          </h1>
+          <p class="hero__subhead">
+            I design digital experiences that people actually enjoy using.
+          </p>
+          <a href="projects.html" class="hero__cta">See My Work</a>
+        </div>
+      </section>
+
+      <section class="skills section" id="skills" aria-labelledby="skills-heading">
+        <div class="skills__inner">
+          <h2 id="skills-heading" class="skills__heading">Skills</h2>
+          <ul class="skills__grid">
+            <li class="skill-card">
+              <span class="skill-card__icon" aria-hidden="true">🔍</span>
+              <h3 class="skill-card__title">User Research</h3>
+              <p class="skill-card__desc">
+                I uncover needs, behaviors, and pain points through interviews, surveys, and
+                analysis of how people work.
+              </p>
+            </li>
+            <li class="skill-card">
+              <span class="skill-card__icon" aria-hidden="true">📐</span>
+              <h3 class="skill-card__title">Wireframing</h3>
+              <p class="skill-card__desc">
+                I map structure, hierarchy, and user flows in low-fidelity layouts before visual
+                design locks in.
+              </p>
+            </li>
+            <li class="skill-card">
+              <span class="skill-card__icon" aria-hidden="true">🧩</span>
+              <h3 class="skill-card__title">Prototyping</h3>
+              <p class="skill-card__desc">
+                I build clickable prototypes to test ideas early, gather feedback, and refine the
+                experience quickly.
+              </p>
+            </li>
+            <li class="skill-card">
+              <span class="skill-card__icon" aria-hidden="true">🎨</span>
+              <h3 class="skill-card__title">Figma</h3>
+              <p class="skill-card__desc">
+                I design and hand off in Figma using components, auto layout, and specs teams can
+                build from.
+              </p>
+            </li>
+            <li class="skill-card">
+              <span class="skill-card__icon" aria-hidden="true">🧪</span>
+              <h3 class="skill-card__title">Usability Testing</h3>
+              <p class="skill-card__desc">
+                I run moderated sessions and tasks with real users to spot friction and validate
+                that designs work.
+              </p>
+            </li>
+            <li class="skill-card">
+              <span class="skill-card__icon" aria-hidden="true">✨</span>
+              <h3 class="skill-card__title">Visual Design</h3>
+              <p class="skill-card__desc">
+                I shape typography, color, spacing, and imagery into clear, cohesive interfaces
+                that feel on-brand.
+              </p>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <div class="main-inner">
+        <section id="about" class="section">
+          <h2>About</h2>
+          <p>Background, skills, and what drives the design practice—from research through craft.</p>
+          <p>
+            <a class="section-more-link" href="about.html">View full bio and timeline</a>
+          </p>
+        </section>
+
+        <section id="projects" class="section">
+          <h2>Projects</h2>
+          <p>Selected work across banking, health, B2B SaaS, and mobile ordering—with research and outcomes.</p>
+          <p>
+            <a class="section-more-link" href="projects.html">Browse the project gallery</a>
+          </p>
+        </section>
+
+        <section id="contact" class="section">
+          <h2>Contact</h2>
+          <p>Reach out for collaborations, project enquiries, or a quick hello.</p>
+          <p>
+            <a class="section-more-link" href="contact.html">Open the contact form</a>
+          </p>
+        </section>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="site-footer__inner">
+        <div class="site-footer__top">
+          <div class="site-footer__brand">
+            <p class="site-footer__name">Srinivas</p>
+            <p class="site-footer__tagline">
+              UX designer crafting digital experiences people actually enjoy using.
+            </p>
+          </div>
+          <nav class="site-footer__nav" aria-label="Footer">
+            <p class="site-footer__label" id="footer-nav-label">Navigate</p>
+            <ul aria-labelledby="footer-nav-label">
+              <li><a href="index.html">Home</a></li>
+              <li><a href="about.html">About</a></li>
+              <li><a href="projects.html">Projects</a></li>
+              <li><a href="contact.html">Contact</a></li>
+            </ul>
+          </nav>
+          <div class="site-footer__social">
+            <p class="site-footer__label" id="footer-social-label">Connect</p>
+            <ul aria-labelledby="footer-social-label">
+              <li>
+                <a
+                  href="https://www.linkedin.com/in/srinivas-villa-30222560/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >LinkedIn</a>
+              </li>
+              <li>
+                <a href="https://dribbble.com/srinivasv" target="_blank" rel="noopener noreferrer"
+                  >Dribbble</a>
+              </li>
+              <li>
+                <a href="https://github.com/srinivasv" target="_blank" rel="noopener noreferrer"
+                  >GitHub</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <p class="site-footer__copy">
+          &copy; <span id="year"></span> Srinivas. All rights reserved.
+        </p>
+      </div>
+    </footer>
+
+    <script src="js/script.js" defer></script>
+  </body>
+</html>

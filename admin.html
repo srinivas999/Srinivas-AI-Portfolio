@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Admin view — contact submissions" />
+    <title>Admin | Srinivas</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/umd/supabase.min.js"></script>
+    <script src="supabase-config.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="site-nav" aria-label="Primary">
+        <a href="index.html" class="logo">Srinivas</a>
+        <button
+          type="button"
+          class="nav-toggle"
+          aria-expanded="false"
+          aria-controls="primary-menu"
+          aria-label="Open menu"
+        >
+          <span class="nav-toggle__lines" aria-hidden="true">
+            <span class="nav-toggle__bar"></span>
+            <span class="nav-toggle__bar"></span>
+            <span class="nav-toggle__bar"></span>
+          </span>
+        </button>
+        <div id="primary-menu" class="nav-menu">
+          <ul class="nav-links">
+            <li><a href="index.html" data-nav-link>Home</a></li>
+            <li><a href="about.html" data-nav-link>About</a></li>
+            <li><a href="projects.html" data-nav-link>Projects</a></li>
+            <li><a href="contact.html" data-nav-link>Contact</a></li>
+            <li><a href="admin.html" data-nav-link>Admin</a></li>
+          </ul>
+        </div>
+      </nav>
+      <div class="nav-backdrop" aria-hidden="true"></div>
+    </header>
+
+    <main class="page-admin">
+      <div class="admin-page-inner">
+        <section class="admin-intro section" aria-labelledby="admin-heading">
+          <h1 id="admin-heading">Contact submissions</h1>
+          <p>
+            Review all submitted messages below. Newest submissions appear first.
+          </p>
+        </section>
+
+        <section class="admin-submissions section" aria-labelledby="submissions-heading">
+          <div class="admin-submissions__header">
+            <h2 id="submissions-heading">Submissions</h2>
+            <p id="admin-status" class="admin-status" hidden aria-live="polite"></p>
+          </div>
+
+          <div id="admin-loading" class="admin-loading" hidden>Loading submissions…</div>
+          <div id="submissions-list" class="admin-submissions-list"></div>
+        </section>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="site-footer__inner">
+        <div class="site-footer__top">
+          <div class="site-footer__brand">
+            <p class="site-footer__name">Srinivas</p>
+            <p class="site-footer__tagline">
+              UX designer crafting digital experiences people actually enjoy using.
+            </p>
+          </div>
+          <nav class="site-footer__nav" aria-label="Footer">
+            <p class="site-footer__label" id="footer-nav-label">Navigate</p>
+            <ul aria-labelledby="footer-nav-label">
+              <li><a href="index.html">Home</a></li>
+              <li><a href="about.html">About</a></li>
+              <li><a href="projects.html">Projects</a></li>
+              <li><a href="contact.html">Contact</a></li>
+            </ul>
+          </nav>
+          <div class="site-footer__social">
+            <p class="site-footer__label" id="footer-social-label">Connect</p>
+            <ul aria-labelledby="footer-social-label">
+              <li>
+                <a
+                  href="https://www.linkedin.com/in/srinivas-villa-30222560/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >LinkedIn</a>
+              </li>
+              <li>
+                <a href="https://dribbble.com/srinivasv" target="_blank" rel="noopener noreferrer"
+                  >Dribbble</a>
+              </li>
+              <li>
+                <a href="https://github.com/srinivasv" target="_blank" rel="noopener noreferrer"
+                  >GitHub</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <p class="site-footer__copy">
+          &copy; <span id="year"></span> Srinivas. All rights reserved.
+        </p>
+      </div>
+    </footer>
+
+    <script defer src="js/admin.js"></script>
+    <script src="js/script.js" defer></script>
+  </body>
+</html>
