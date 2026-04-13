@@ -1,10 +1,43 @@
-const submissionsList = document.getElementById("submissions-list");
-const adminStatus = document.getElementById("admin-status");
-const adminLoading = document.getElementById("admin-loading");
+const authSection = document.getElementById("admin-auth-section");
+const dashboardSection = document.getElementById("admin-dashboard-section");
+const loginForm = document.getElementById("admin-login-form");
+const authStatus = document.getElementById("admin-auth-status");
+const loginButton = document.getElementById("admin-login-button");
+const loginButtonText = loginButton?.querySelector(".contact-submit__text");
+const loginButtonSpinner = loginButton?.querySelector(".contact-submit__spinner");
+const sessionLabel = document.getElementById("admin-session-label");
+const logoutButton = document.getElementById("admin-logout-button");
+
+const tabButtons = document.querySelectorAll("[data-admin-tab-button]");
+const tabPanels = document.querySelectorAll("[data-admin-tab-panel]");
+
+const movieForm = document.getElementById("movie-form");
+const movieFormStatus = document.getElementById("movie-form-status");
+const movieSubmitButton = document.getElementById("movie-submit-button");
+const movieSubmitButtonText = movieSubmitButton?.querySelector(".contact-submit__text");
+const movieSubmitButtonSpinner = movieSubmitButton?.querySelector(".contact-submit__spinner");
+const moviesList = document.getElementById("movies-list");
+const moviesStatus = document.getElementById("admin-data-status");
+const moviesLoading = document.getElementById("admin-loading");
+
+const contactSubmissionsList = document.getElementById("contact-submissions-list");
+const contactAdminStatus = document.getElementById("contact-admin-status");
+const contactAdminLoading = document.getElementById("contact-admin-loading");
+
+const siteSettingsForm = document.getElementById("site-settings-form");
+const siteSettingsStatus = document.getElementById("site-settings-status");
+const siteSettingsSubmitButton = document.getElementById("site-settings-submit-button");
+const siteSettingsSubmitButtonText = siteSettingsSubmitButton?.querySelector(".contact-submit__text");
+const siteSettingsSubmitButtonSpinner = siteSettingsSubmitButton?.querySelector(".contact-submit__spinner");
 
 const SUPABASE_URL = window.SUPABASE_URL;
 const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY;
-const TABLE_NAME = "contact_submissions";
+const OTT_TABLE_NAME = "ott_movies";
+const CONTACT_TABLE_NAME = "contact_submissions";
+const SITE_SETTINGS_TABLE_NAME = "site_settings";
+const SITE_SETTINGS_ROW_ID = 1;
+
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 function formatCreatedAt(value) {
   if (!value) return "Unknown date";
@@ -18,19 +51,104 @@ function formatCreatedAt(value) {
   });
 }
 
-function setStatus(message, isError = false) {
-  if (!adminStatus) return;
-  adminStatus.textContent = message;
-  adminStatus.classList.toggle("admin-status--error", isError);
-  adminStatus.hidden = !message;
+function formatReleaseDate(value) {
+  if (!value) return "TBA";
+  const date = new Date(`${value}T00:00:00`);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+  });
 }
 
-function createSubmissionCard(submission) {
+function setStatus(target, message, isError = false) {
+  if (!target) return;
+  target.textContent = message;
+  target.classList.toggle("admin-status--error", isError);
+  target.hidden = !message;
+}
+
+function setButtonLoading(button, textNode, spinnerNode, isLoading, idleText, loadingText) {
+  if (button) button.disabled = isLoading;
+  if (textNode) textNode.textContent = isLoading ? loadingText : idleText;
+  if (spinnerNode) spinnerNode.hidden = !isLoading;
+}
+
+function setAuthenticatedState(session) {
+  const isAuthenticated = Boolean(session);
+  if (authSection) authSection.hidden = isAuthenticated;
+  if (dashboardSection) dashboardSection.hidden = !isAuthenticated;
+  if (sessionLabel) {
+    sessionLabel.textContent = isAuthenticated ? `Signed in as ${session.user.email || "admin user"}` : "";
+  }
+}
+
+function setActiveTab(tabName) {
+  tabButtons.forEach((button) => {
+    const isActive = button.dataset.adminTabButton === tabName;
+    button.classList.toggle("is-active", isActive);
+    button.setAttribute("aria-selected", String(isActive));
+  });
+
+  tabPanels.forEach((panel) => {
+    panel.hidden = panel.dataset.adminTabPanel !== tabName;
+  });
+}
+
+function renderEmptyState(container, message) {
+  if (!container) return;
+  container.innerHTML = `<p class="admin-empty">${message}</p>`;
+}
+
+function createMovieCard(movie) {
   const card = document.createElement("article");
   card.className = "submission-card";
-  if (submission.is_read) {
-    card.classList.add("submission-card--read");
-  }
+
+  const top = document.createElement("div");
+  top.className = "submission-card__top";
+
+  const title = document.createElement("div");
+  title.className = "submission-card__title";
+  title.textContent = movie.movie_name || "Untitled";
+
+  const category = document.createElement("span");
+  category.className = "submission-card__status";
+  category.textContent = movie.category || "Movie";
+  title.appendChild(category);
+
+  const date = document.createElement("time");
+  date.className = "submission-card__date";
+  date.dateTime = movie.created_at || "";
+  date.textContent = formatCreatedAt(movie.created_at);
+
+  top.appendChild(title);
+  top.appendChild(date);
+
+  const releaseDate = document.createElement("p");
+  releaseDate.className = "submission-card__meta";
+  releaseDate.textContent = `Digital Release Date: ${formatReleaseDate(movie.digital_release_date)}`;
+
+  const partner = document.createElement("p");
+  partner.className = "submission-card__meta";
+  partner.textContent = `Streaming Partner: ${movie.streaming_partner || "-"}`;
+
+  const language = document.createElement("p");
+  language.className = "submission-card__meta";
+  language.textContent = `Language: ${movie.language || "-"}`;
+
+  card.appendChild(top);
+  card.appendChild(releaseDate);
+  card.appendChild(partner);
+  card.appendChild(language);
+
+  return card;
+}
+
+function createContactSubmissionCard(submission) {
+  const card = document.createElement("article");
+  card.className = "submission-card";
+  if (submission.is_read) card.classList.add("submission-card--read");
 
   const top = document.createElement("div");
   top.className = "submission-card__top";
@@ -76,18 +194,17 @@ function createSubmissionCard(submission) {
   markReadButton.addEventListener("click", async () => {
     if (submission.is_read) return;
     markReadButton.disabled = true;
-    markReadButton.textContent = "Saving…";
-    setStatus("");
+    markReadButton.textContent = "Saving...";
+    setStatus(contactAdminStatus, "");
 
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     const { error } = await supabaseClient
-      .from(TABLE_NAME)
+      .from(CONTACT_TABLE_NAME)
       .update({ is_read: true })
       .eq("id", submission.id);
 
     if (error) {
       console.error("Mark read error:", error);
-      setStatus("Unable to update read status. Please try again.", true);
+      setStatus(contactAdminStatus, "Unable to update read status. Please try again.", true);
       markReadButton.disabled = false;
       markReadButton.textContent = "Mark as read";
       return;
@@ -100,45 +217,263 @@ function createSubmissionCard(submission) {
   });
 
   controls.appendChild(markReadButton);
-
   card.appendChild(top);
   card.appendChild(email);
   card.appendChild(subject);
   card.appendChild(message);
   card.appendChild(controls);
-
   return card;
 }
 
-async function loadSubmissions() {
-  if (!submissionsList || !adminLoading) return;
-  setStatus("");
-  adminLoading.hidden = false;
-  submissionsList.innerHTML = "";
+function applySiteSettingsToForm(settings) {
+  const homepageMode = document.getElementById("homepage-mode");
+  const showHome = document.getElementById("setting-show-home");
+  const showAbout = document.getElementById("setting-show-about");
+  const showProjects = document.getElementById("setting-show-projects");
+  const showContact = document.getElementById("setting-show-contact");
 
-  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  if (homepageMode) homepageMode.value = settings.homepage_mode || "portfolio";
+  if (showHome) showHome.checked = settings.show_home !== false;
+  if (showAbout) showAbout.checked = settings.show_about !== false;
+  if (showProjects) showProjects.checked = settings.show_projects !== false;
+  if (showContact) showContact.checked = settings.show_contact !== false;
+}
+
+async function loadMovies() {
+  if (!moviesList || !moviesLoading) return;
+  setStatus(moviesStatus, "");
+  moviesLoading.hidden = false;
+  moviesList.innerHTML = "";
+
   const { data, error } = await supabaseClient
-    .from(TABLE_NAME)
+    .from(OTT_TABLE_NAME)
     .select("*")
     .order("created_at", { ascending: false });
 
-  adminLoading.hidden = true;
+  moviesLoading.hidden = true;
 
   if (error) {
-    console.error("Fetch submissions error:", error);
-    setStatus("Unable to load submissions. Please refresh.", true);
+    console.error("Fetch OTT movies error:", error);
+    setStatus(moviesStatus, "Unable to load movies. Please check your permissions.", true);
+    renderEmptyState(moviesList, "No movies could be loaded.");
     return;
   }
 
   if (!data || data.length === 0) {
-    submissionsList.innerHTML = "<p class=\"admin-empty\">No submissions found.</p>";
+    renderEmptyState(moviesList, "No movies added yet.");
+    return;
+  }
+
+  data.forEach((movie) => {
+    moviesList.appendChild(createMovieCard(movie));
+  });
+}
+
+async function loadContactSubmissions() {
+  if (!contactSubmissionsList || !contactAdminLoading) return;
+  setStatus(contactAdminStatus, "");
+  contactAdminLoading.hidden = false;
+  contactSubmissionsList.innerHTML = "";
+
+  const { data, error } = await supabaseClient
+    .from(CONTACT_TABLE_NAME)
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  contactAdminLoading.hidden = true;
+
+  if (error) {
+    console.error("Fetch contact submissions error:", error);
+    setStatus(contactAdminStatus, "Unable to load contact submissions. Please check your permissions.", true);
+    renderEmptyState(contactSubmissionsList, "No submissions could be loaded.");
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    renderEmptyState(contactSubmissionsList, "No submissions found.");
     return;
   }
 
   data.forEach((submission) => {
-    const card = createSubmissionCard(submission);
-    submissionsList.appendChild(card);
+    contactSubmissionsList.appendChild(createContactSubmissionCard(submission));
   });
 }
 
-loadSubmissions();
+async function loadSiteSettings() {
+  if (!siteSettingsForm) return;
+
+  const { data, error } = await supabaseClient
+    .from(SITE_SETTINGS_TABLE_NAME)
+    .select("*")
+    .eq("id", SITE_SETTINGS_ROW_ID)
+    .maybeSingle();
+
+  if (error) {
+    console.error("Fetch site settings error:", error);
+    setStatus(siteSettingsStatus, "Unable to load site settings. Create the settings table and policies first.", true);
+    return;
+  }
+
+  applySiteSettingsToForm(data || {});
+}
+
+tabButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    setActiveTab(button.dataset.adminTabButton);
+  });
+});
+
+if (loginForm) {
+  loginForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (!loginForm.reportValidity()) return;
+
+    setStatus(authStatus, "");
+    setButtonLoading(loginButton, loginButtonText, loginButtonSpinner, true, "Sign In", "Signing In...");
+
+    const formData = new FormData(loginForm);
+    const email = formData.get("email")?.toString().trim() ?? "";
+    const password = formData.get("password")?.toString() ?? "";
+
+    const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+
+    setButtonLoading(loginButton, loginButtonText, loginButtonSpinner, false, "Sign In", "Signing In...");
+
+    if (error) {
+      console.error("Admin sign-in error:", error);
+      setStatus(authStatus, "Login failed. Check your email and password.", true);
+      return;
+    }
+
+    loginForm.reset();
+    setStatus(authStatus, "");
+  });
+}
+
+if (logoutButton) {
+  logoutButton.addEventListener("click", async () => {
+    setStatus(moviesStatus, "");
+    setStatus(movieFormStatus, "");
+    setStatus(contactAdminStatus, "");
+    setStatus(siteSettingsStatus, "");
+
+    const { error } = await supabaseClient.auth.signOut();
+    if (error) {
+      console.error("Admin sign-out error:", error);
+      setStatus(moviesStatus, "Unable to sign out right now. Please try again.", true);
+    }
+  });
+}
+
+if (movieForm) {
+  movieForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (!movieForm.reportValidity()) return;
+
+    setStatus(movieFormStatus, "");
+    setButtonLoading(movieSubmitButton, movieSubmitButtonText, movieSubmitButtonSpinner, true, "Add Movie", "Saving...");
+
+    const formData = new FormData(movieForm);
+    const payload = {
+      movie_name: formData.get("movie_name")?.toString().trim() ?? "",
+      digital_release_date: formData.get("digital_release_date")?.toString() || null,
+      streaming_partner: formData.get("streaming_partner")?.toString().trim() ?? "",
+      category: formData.get("category")?.toString().trim() ?? "",
+      language: formData.get("language")?.toString().trim() ?? "",
+    };
+
+    const { error } = await supabaseClient.from(OTT_TABLE_NAME).insert([payload]);
+
+    setButtonLoading(movieSubmitButton, movieSubmitButtonText, movieSubmitButtonSpinner, false, "Add Movie", "Saving...");
+
+    if (error) {
+      console.error("Insert OTT movie error:", error);
+      setStatus(movieFormStatus, "Unable to save the movie. Check your table policies and try again.", true);
+      return;
+    }
+
+    movieForm.reset();
+    const languageField = document.getElementById("movie-language");
+    if (languageField) languageField.value = "Telugu";
+
+    setStatus(movieFormStatus, "Movie added successfully.");
+    loadMovies();
+  });
+}
+
+if (siteSettingsForm) {
+  siteSettingsForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    setStatus(siteSettingsStatus, "");
+    setButtonLoading(
+      siteSettingsSubmitButton,
+      siteSettingsSubmitButtonText,
+      siteSettingsSubmitButtonSpinner,
+      true,
+      "Save Settings",
+      "Saving..."
+    );
+
+    const payload = {
+      id: SITE_SETTINGS_ROW_ID,
+      homepage_mode: document.getElementById("homepage-mode")?.value || "portfolio",
+      show_home: Boolean(document.getElementById("setting-show-home")?.checked),
+      show_about: Boolean(document.getElementById("setting-show-about")?.checked),
+      show_projects: Boolean(document.getElementById("setting-show-projects")?.checked),
+      show_contact: Boolean(document.getElementById("setting-show-contact")?.checked),
+    };
+
+    const { error } = await supabaseClient
+      .from(SITE_SETTINGS_TABLE_NAME)
+      .upsert([payload], { onConflict: "id" });
+
+    setButtonLoading(
+      siteSettingsSubmitButton,
+      siteSettingsSubmitButtonText,
+      siteSettingsSubmitButtonSpinner,
+      false,
+      "Save Settings",
+      "Saving..."
+    );
+
+    if (error) {
+      console.error("Save site settings error:", error);
+      setStatus(siteSettingsStatus, "Unable to save site settings. Check your table and policies.", true);
+      return;
+    }
+
+    setStatus(siteSettingsStatus, "Site settings saved successfully.");
+  });
+}
+
+supabaseClient.auth.onAuthStateChange((_event, session) => {
+  setAuthenticatedState(session);
+  setStatus(authStatus, "");
+
+  if (session) {
+    loadMovies();
+    loadContactSubmissions();
+    loadSiteSettings();
+  } else {
+    if (moviesList) moviesList.innerHTML = "";
+    if (contactSubmissionsList) contactSubmissionsList.innerHTML = "";
+  }
+});
+
+async function initAdmin() {
+  const {
+    data: { session },
+  } = await supabaseClient.auth.getSession();
+
+  setActiveTab("ott");
+  setAuthenticatedState(session);
+
+  if (session) {
+    loadMovies();
+    loadContactSubmissions();
+    loadSiteSettings();
+  }
+}
+
+initAdmin();
