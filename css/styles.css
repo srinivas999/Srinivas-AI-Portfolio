@@ -1461,6 +1461,28 @@ main {
   accent-color: #4338ca;
 }
 
+html[data-hide-home="true"] li:has(> a[href="index.html"]) {
+  display: none;
+}
+
+html[data-hide-about="true"] li:has(> a[href="about.html"]) {
+  display: none;
+}
+
+html[data-hide-projects="true"] li:has(> a[href="projects.html"]) {
+  display: none;
+}
+
+html[data-hide-contact="true"] li:has(> a[href="contact.html"]) {
+  display: none;
+}
+
+html[data-hide-about="true"] #about,
+html[data-hide-projects="true"] #projects,
+html[data-hide-contact="true"] #contact {
+  display: none;
+}
+
 .admin-dashboard-grid {
   display: grid;
   gap: 1.5rem;

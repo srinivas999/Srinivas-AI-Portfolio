@@ -36,8 +36,26 @@ const OTT_TABLE_NAME = "ott_movies";
 const CONTACT_TABLE_NAME = "contact_submissions";
 const SITE_SETTINGS_TABLE_NAME = "site_settings";
 const SITE_SETTINGS_ROW_ID = 1;
+const SITE_SETTINGS_STORAGE_KEY = "siteSettingsCache";
 
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const sessionStorageAdapter = {
+  getItem(key) {
+    return window.sessionStorage.getItem(key);
+  },
+  setItem(key, value) {
+    window.sessionStorage.setItem(key, value);
+  },
+  removeItem(key) {
+    window.sessionStorage.removeItem(key);
+  },
+};
+
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+  auth: {
+    storage: sessionStorageAdapter,
+    persistSession: true,
+  },
+});
 
 function formatCreatedAt(value) {
   if (!value) return "Unknown date";
@@ -172,11 +190,25 @@ function createContactSubmissionCard(submission) {
 
   const email = document.createElement("p");
   email.className = "submission-card__meta";
-  email.innerHTML = `<strong>Email:</strong> <a href="mailto:${submission.email}">${submission.email || "-"}</a>`;
+  const emailLabel = document.createElement("strong");
+  emailLabel.textContent = "Email:";
+  email.appendChild(emailLabel);
+  email.appendChild(document.createTextNode(" "));
+  if (submission.email) {
+    const emailLink = document.createElement("a");
+    emailLink.href = `mailto:${submission.email}`;
+    emailLink.textContent = submission.email;
+    email.appendChild(emailLink);
+  } else {
+    email.appendChild(document.createTextNode("-"));
+  }
 
   const subject = document.createElement("p");
   subject.className = "submission-card__meta";
-  subject.innerHTML = `<strong>Subject:</strong> ${submission.subject || "(no subject)"}`;
+  const subjectLabel = document.createElement("strong");
+  subjectLabel.textContent = "Subject:";
+  subject.appendChild(subjectLabel);
+  subject.appendChild(document.createTextNode(` ${submission.subject || "(no subject)"}`));
 
   const message = document.createElement("p");
   message.className = "submission-card__message";
@@ -237,6 +269,14 @@ function applySiteSettingsToForm(settings) {
   if (showAbout) showAbout.checked = settings.show_about !== false;
   if (showProjects) showProjects.checked = settings.show_projects !== false;
   if (showContact) showContact.checked = settings.show_contact !== false;
+}
+
+function cacheSiteSettings(settings) {
+  try {
+    window.localStorage.setItem(SITE_SETTINGS_STORAGE_KEY, JSON.stringify(settings));
+  } catch (error) {
+    console.error("Site settings cache error:", error);
+  }
 }
 
 async function loadMovies() {
@@ -315,6 +355,7 @@ async function loadSiteSettings() {
   }
 
   applySiteSettingsToForm(data || {});
+  cacheSiteSettings(data || {});
 }
 
 tabButtons.forEach((button) => {
@@ -443,6 +484,7 @@ if (siteSettingsForm) {
       return;
     }
 
+    cacheSiteSettings(payload);
     setStatus(siteSettingsStatus, "Site settings saved successfully.");
   });
 }

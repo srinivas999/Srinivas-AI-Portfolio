@@ -3,6 +3,7 @@
     return;
   }
 
+  const STORAGE_KEY = "siteSettingsCache";
   const SETTINGS_TABLE_NAME = "site_settings";
   const SETTINGS_ROW_ID = 1;
   const path = window.location.pathname || "";
@@ -33,10 +34,16 @@
   }
 
   function applyVisibility(settings) {
+    const root = document.documentElement;
     const showHome = settings.show_home !== false;
     const showAbout = settings.show_about !== false;
     const showProjects = settings.show_projects !== false;
     const showContact = settings.show_contact !== false;
+
+    root.dataset.hideHome = String(!showHome);
+    root.dataset.hideAbout = String(!showAbout);
+    root.dataset.hideProjects = String(!showProjects);
+    root.dataset.hideContact = String(!showContact);
 
     setLinkVisibility("index.html", showHome);
     setLinkVisibility("about.html", showAbout);
@@ -52,6 +59,7 @@
 
   function applyHomepageMode(settings) {
     const homepageMode = settings.homepage_mode || "portfolio";
+    document.documentElement.dataset.homepageMode = homepageMode;
 
     if (currentPage === "home" && homepageMode === "ott_only") {
       window.location.replace("ott-movies.html");
@@ -70,6 +78,12 @@
         console.error("Site settings load error:", error);
       }
       return;
+    }
+
+    try {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    } catch (storageError) {
+      console.error("Site settings cache error:", storageError);
     }
 
     applyVisibility(data);
