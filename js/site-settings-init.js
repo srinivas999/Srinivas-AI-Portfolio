@@ -18,16 +18,15 @@
 
     const settings = JSON.parse(raw);
     const root = document.documentElement;
+    const homepageMode = settings.homepage_mode || "portfolio";
 
     root.dataset.hideHome = String(settings.show_home === false);
     root.dataset.hideAbout = String(settings.show_about === false);
     root.dataset.hideProjects = String(settings.show_projects === false);
     root.dataset.hideContact = String(settings.show_contact === false);
-    root.dataset.homepageMode = settings.homepage_mode || "portfolio";
-
-    if (currentPage === "home" && settings.homepage_mode === "ott_only") {
-      window.location.replace("ott-movies.html");
-    }
+    root.dataset.hideOttTab = String(homepageMode === "portfolio");
+    root.dataset.hideSiteHeader = String(homepageMode === "ott_only");
+    root.dataset.homepageMode = homepageMode;
   } catch (error) {
     console.error("Site settings init error:", error);
   }
