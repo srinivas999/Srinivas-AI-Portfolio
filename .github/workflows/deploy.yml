@@ -22,6 +22,9 @@ jobs:
           window.SUPABASE_ANON_KEY="${{ secrets.SUPABASE_ANON_KEY }}"
           EOF
 
+      - name: Force add Supabase config
+        run: git add -f supabase-config.js
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
