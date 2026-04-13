@@ -35,11 +35,14 @@
 
   function applyVisibility(settings) {
     const root = document.documentElement;
+    const homepageMode = settings.homepage_mode || "portfolio";
     const showHome = settings.show_home !== false;
     const showAbout = settings.show_about !== false;
     const showProjects = settings.show_projects !== false;
     const showContact = settings.show_contact !== false;
 
+    root.dataset.hideOttTab = String(homepageMode === "portfolio");
+    root.dataset.hideSiteHeader = String(homepageMode === "ott_only");
     root.dataset.hideHome = String(!showHome);
     root.dataset.hideAbout = String(!showAbout);
     root.dataset.hideProjects = String(!showProjects);
@@ -49,6 +52,7 @@
     setLinkVisibility("about.html", showAbout);
     setLinkVisibility("projects.html", showProjects);
     setLinkVisibility("contact.html", showContact);
+    setLinkVisibility("ott-movies.html", homepageMode !== "portfolio");
 
     if (currentPage === "home") {
       setElementVisibility("#about", showAbout);
@@ -60,10 +64,6 @@
   function applyHomepageMode(settings) {
     const homepageMode = settings.homepage_mode || "portfolio";
     document.documentElement.dataset.homepageMode = homepageMode;
-
-    if (currentPage === "home" && homepageMode === "ott_only") {
-      window.location.replace("ott-movies.html");
-    }
   }
 
   async function loadSiteSettings() {

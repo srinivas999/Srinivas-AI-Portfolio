@@ -1477,6 +1477,14 @@ html[data-hide-contact="true"] li:has(> a[href="contact.html"]) {
   display: none;
 }
 
+html[data-hide-ott-tab="true"] li:has(> a[href="ott-movies.html"]) {
+  display: none;
+}
+
+html[data-hide-site-header="true"] .site-header {
+  display: none;
+}
+
 html[data-hide-about="true"] #about,
 html[data-hide-projects="true"] #projects,
 html[data-hide-contact="true"] #contact {
