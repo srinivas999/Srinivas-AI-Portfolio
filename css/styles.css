@@ -1967,8 +1967,26 @@ html[data-hide-contact="true"] #contact {
   font-size: clamp(1.75rem, 3vw, 2.4rem);
   line-height: 1.05;
   letter-spacing: -0.04em;
-  color: #111827;
+  color: #f8fafc;
   max-width: 100%;
+}
+
+.page-ott .section-heading .eyebrow,
+.page-ott .ott-filter-label,
+.page-ott .ott-movie-count {
+  color: rgba(248, 250, 252, 0.75);
+}
+
+.page-ott .ott-table-section {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 28px;
+  padding: 1.5rem;
+}
+
+.page-ott .ott-table-wrap {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 24px;
+  padding: 0.25rem;
 }
 
 .ott-hero__tagline,
@@ -2245,6 +2263,10 @@ html[data-hide-contact="true"] #contact {
 .ott-trending-card h3 {
   margin: 0;
   font-size: 1.25rem;
+}
+
+.page-ott .ott-trending {
+  display: none;
 }
 
 .ott-empty {
