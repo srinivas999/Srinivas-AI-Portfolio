@@ -18,7 +18,7 @@
             ? "ott"
             : "home";
 
-  const supabaseClient = supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+  const supabaseClient = window.getSupabaseClient();
 
   function setLinkVisibility(href, isVisible) {
     document.querySelectorAll(`a[href="${href}"]`).forEach((link) => {
