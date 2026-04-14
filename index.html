@@ -6,7 +6,7 @@
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://uhimmowvkrmdbpniveps.supabase.co; font-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests"
+      content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; connect-src 'self' https://uhimmowvkrmdbpniveps.supabase.co https://cdn.jsdelivr.net; font-src 'self' data: https://fonts.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests"
     />
     <meta name="description" content="OTT Movies - Telugu movie OTT releases and streaming dates" />
     <title>Srinivas | OTT Movies</title>
@@ -54,6 +54,14 @@
             platforms in 2026.
           </p>
         </header>
+
+        <div class="release-table-toolbar">
+          <label class="release-table-toolbar__label" for="ott-date-sort">Sort by date</label>
+          <select class="release-table-toolbar__select" id="ott-date-sort" name="ott-date-sort">
+            <option value="desc">Newest first</option>
+            <option value="asc">Oldest first</option>
+          </select>
+        </div>
 
         <p id="ott-movies-status" class="admin-status" hidden aria-live="polite"></p>
         <div id="ott-movies-loading" class="admin-loading" hidden>Loading OTT releases...</div>

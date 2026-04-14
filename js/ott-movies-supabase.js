@@ -1,10 +1,10 @@
 const ottMoviesTableBody = document.getElementById("ott-movies-table-body");
 const ottMoviesStatus = document.getElementById("ott-movies-status");
 const ottMoviesLoading = document.getElementById("ott-movies-loading");
+const ottDateSort = document.getElementById("ott-date-sort");
 
-const SUPABASE_URL = window.SUPABASE_URL;
-const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY;
 const TABLE_NAME = "ott_movies";
+let ottMovies = [];
 
 function setStatus(message, isError = false) {
   if (!ottMoviesStatus) return;
@@ -51,6 +51,48 @@ function createMovieRow(movie) {
   return row;
 }
 
+function getReleaseTime(movie) {
+  if (!movie?.digital_release_date) {
+    return Number.NEGATIVE_INFINITY;
+  }
+
+  const date = new Date(`${movie.digital_release_date}T00:00:00`);
+  if (Number.isNaN(date.getTime())) {
+    return Number.NEGATIVE_INFINITY;
+  }
+
+  return date.getTime();
+}
+
+function renderMovies(movies) {
+  if (!ottMoviesTableBody) return;
+
+  ottMoviesTableBody.innerHTML = "";
+  movies.forEach((movie) => {
+    ottMoviesTableBody.appendChild(createMovieRow(movie));
+  });
+}
+
+function applySort() {
+  if (!ottMovies.length) return;
+
+  const sortOrder = ottDateSort?.value || "desc";
+  const sortedMovies = [...ottMovies].sort((first, second) => {
+    const firstTime = getReleaseTime(first);
+    const secondTime = getReleaseTime(second);
+
+    if (firstTime === secondTime) {
+      return sortOrder === "asc"
+        ? String(first.movie_name || "").localeCompare(String(second.movie_name || ""))
+        : String(second.movie_name || "").localeCompare(String(first.movie_name || ""));
+    }
+
+    return sortOrder === "asc" ? firstTime - secondTime : secondTime - firstTime;
+  });
+
+  renderMovies(sortedMovies);
+}
+
 function renderEmptyState(message) {
   if (!ottMoviesTableBody) return;
 
@@ -70,7 +112,7 @@ async function loadOttMovies() {
   ottMoviesLoading.hidden = false;
   ottMoviesTableBody.innerHTML = "";
 
-  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const supabaseClient = window.getSupabaseClient();
   const { data, error } = await supabaseClient
     .from(TABLE_NAME)
     .select("*")
@@ -91,9 +133,12 @@ async function loadOttMovies() {
     return;
   }
 
-  data.forEach((movie) => {
-    ottMoviesTableBody.appendChild(createMovieRow(movie));
-  });
+  ottMovies = data;
+  applySort();
+}
+
+if (ottDateSort) {
+  ottDateSort.addEventListener("change", applySort);
 }
 
 loadOttMovies();

@@ -16,6 +16,12 @@ const movieFormStatus = document.getElementById("movie-form-status");
 const movieSubmitButton = document.getElementById("movie-submit-button");
 const movieSubmitButtonText = movieSubmitButton?.querySelector(".contact-submit__text");
 const movieSubmitButtonSpinner = movieSubmitButton?.querySelector(".contact-submit__spinner");
+const ottCsvStatus = document.getElementById("ott-csv-status");
+const ottDownloadButton = document.getElementById("ott-download-button");
+const ottCsvFileInput = document.getElementById("ott-csv-file");
+const ottUploadButton = document.getElementById("ott-upload-button");
+const ottUploadButtonText = ottUploadButton?.querySelector(".contact-submit__text");
+const ottUploadButtonSpinner = ottUploadButton?.querySelector(".contact-submit__spinner");
 const moviesList = document.getElementById("movies-list");
 const moviesStatus = document.getElementById("admin-data-status");
 const moviesLoading = document.getElementById("admin-loading");
@@ -30,32 +36,13 @@ const siteSettingsSubmitButton = document.getElementById("site-settings-submit-b
 const siteSettingsSubmitButtonText = siteSettingsSubmitButton?.querySelector(".contact-submit__text");
 const siteSettingsSubmitButtonSpinner = siteSettingsSubmitButton?.querySelector(".contact-submit__spinner");
 
-const SUPABASE_URL = window.SUPABASE_URL;
-const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY;
 const OTT_TABLE_NAME = "ott_movies";
 const CONTACT_TABLE_NAME = "contact_submissions";
 const SITE_SETTINGS_TABLE_NAME = "site_settings";
 const SITE_SETTINGS_ROW_ID = 1;
 const SITE_SETTINGS_STORAGE_KEY = "siteSettingsCache";
-
-const sessionStorageAdapter = {
-  getItem(key) {
-    return window.sessionStorage.getItem(key);
-  },
-  setItem(key, value) {
-    window.sessionStorage.setItem(key, value);
-  },
-  removeItem(key) {
-    window.sessionStorage.removeItem(key);
-  },
-};
-
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-  auth: {
-    storage: sessionStorageAdapter,
-    persistSession: true,
-  },
-});
+const supabaseClient = window.getSupabaseClient({ storageType: "session" });
+let ottMoviesCache = [];
 
 function formatCreatedAt(value) {
   if (!value) return "Unknown date";
@@ -117,6 +104,142 @@ function setActiveTab(tabName) {
 function renderEmptyState(container, message) {
   if (!container) return;
   container.innerHTML = `<p class="admin-empty">${message}</p>`;
+}
+
+function escapeCsvValue(value) {
+  const normalized = value == null ? "" : String(value);
+  if (/[",\r\n]/.test(normalized)) {
+    return `"${normalized.replace(/"/g, '""')}"`;
+  }
+  return normalized;
+}
+
+function normalizeCsvHeader(header) {
+  return String(header || "")
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "");
+}
+
+function parseCsv(text) {
+  const rows = [];
+  let currentRow = [];
+  let currentValue = "";
+  let inQuotes = false;
+
+  for (let index = 0; index < text.length; index += 1) {
+    const char = text[index];
+    const nextChar = text[index + 1];
+
+    if (char === '"') {
+      if (inQuotes && nextChar === '"') {
+        currentValue += '"';
+        index += 1;
+      } else {
+        inQuotes = !inQuotes;
+      }
+      continue;
+    }
+
+    if (char === "," && !inQuotes) {
+      currentRow.push(currentValue);
+      currentValue = "";
+      continue;
+    }
+
+    if ((char === "\n" || char === "\r") && !inQuotes) {
+      if (char === "\r" && nextChar === "\n") {
+        index += 1;
+      }
+      currentRow.push(currentValue);
+      rows.push(currentRow);
+      currentRow = [];
+      currentValue = "";
+      continue;
+    }
+
+    currentValue += char;
+  }
+
+  if (currentValue.length > 0 || currentRow.length > 0) {
+    currentRow.push(currentValue);
+    rows.push(currentRow);
+  }
+
+  return rows.filter((row) => row.some((cell) => String(cell || "").trim() !== ""));
+}
+
+function buildCsvPayload(text) {
+  const rows = parseCsv(text);
+  if (!rows.length) {
+    throw new Error("The CSV file is empty.");
+  }
+
+  const headers = rows[0].map(normalizeCsvHeader);
+  const requiredColumns = ["movie_name"];
+  const missingRequiredColumns = requiredColumns.filter((column) => !headers.includes(column));
+
+  if (missingRequiredColumns.length) {
+    throw new Error(`Missing required column(s): ${missingRequiredColumns.join(", ")}`);
+  }
+
+  return rows.slice(1).map((row) => {
+    const record = {};
+    headers.forEach((header, headerIndex) => {
+      record[header] = row[headerIndex]?.trim() ?? "";
+    });
+
+    return {
+      id: record.id ? Number(record.id) : null,
+      movie_name: record.movie_name || "",
+      digital_release_date: record.digital_release_date || null,
+      streaming_partner: record.streaming_partner || "",
+      category: record.category || "",
+      language: record.language || "",
+    };
+  }).filter((row) => row.movie_name);
+}
+
+async function uploadMovieRows(rows) {
+  const { data: existingMovies, error: fetchError } = await supabaseClient
+    .from(OTT_TABLE_NAME)
+    .select("movie_name");
+
+  if (fetchError) {
+    throw fetchError;
+  }
+
+  const existingMovieNames = new Set(
+    (existingMovies || [])
+      .map((movie) => String(movie.movie_name || "").trim().toLowerCase())
+      .filter(Boolean)
+  );
+
+  const uniqueNewRows = [];
+
+  rows.forEach((row) => {
+    const movieNameKey = String(row.movie_name || "").trim().toLowerCase();
+    if (!movieNameKey || existingMovieNames.has(movieNameKey)) {
+      return;
+    }
+
+    existingMovieNames.add(movieNameKey);
+    const { id, ...insertRow } = row;
+    uniqueNewRows.push(insertRow);
+  });
+
+  if (!uniqueNewRows.length) {
+    return { insertedCount: 0 };
+  }
+
+  const { error } = await supabaseClient.from(OTT_TABLE_NAME).insert(uniqueNewRows);
+
+  if (error) {
+    throw error;
+  }
+
+  return { insertedCount: uniqueNewRows.length };
 }
 
 function createMovieCard(movie) {
@@ -300,10 +423,12 @@ async function loadMovies() {
   }
 
   if (!data || data.length === 0) {
+    ottMoviesCache = [];
     renderEmptyState(moviesList, "No movies added yet.");
     return;
   }
 
+  ottMoviesCache = data;
   data.forEach((movie) => {
     moviesList.appendChild(createMovieCard(movie));
   });
@@ -439,6 +564,118 @@ if (movieForm) {
 
     setStatus(movieFormStatus, "Movie added successfully.");
     loadMovies();
+  });
+}
+
+if (ottDownloadButton) {
+  ottDownloadButton.addEventListener("click", async () => {
+    setStatus(ottCsvStatus, "");
+
+    if (!ottMoviesCache.length) {
+      await loadMovies();
+    }
+
+    if (!ottMoviesCache.length) {
+      setStatus(ottCsvStatus, "There are no movies available to export.", true);
+      return;
+    }
+
+    const header = [
+      "id",
+      "movie_name",
+      "digital_release_date",
+      "streaming_partner",
+      "category",
+      "language",
+    ];
+
+    const lines = [
+      header.join(","),
+      ...ottMoviesCache.map((movie) =>
+        [
+          movie.id,
+          movie.movie_name,
+          movie.digital_release_date,
+          movie.streaming_partner,
+          movie.category,
+          movie.language,
+        ]
+          .map(escapeCsvValue)
+          .join(",")
+      ),
+    ];
+
+    const blob = new Blob([lines.join("\r\n")], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "ott-movies.csv";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+
+    setStatus(ottCsvStatus, "CSV downloaded successfully.");
+  });
+}
+
+if (ottUploadButton) {
+  ottUploadButton.addEventListener("click", async () => {
+    const file = ottCsvFileInput?.files?.[0];
+    if (!file) {
+      setStatus(ottCsvStatus, "Choose a CSV file before uploading.", true);
+      return;
+    }
+
+    setStatus(ottCsvStatus, "");
+    setButtonLoading(
+      ottUploadButton,
+      ottUploadButtonText,
+      ottUploadButtonSpinner,
+      true,
+      "Upload CSV",
+      "Uploading..."
+    );
+
+    try {
+      const csvText = await file.text();
+      const rows = buildCsvPayload(csvText);
+
+      if (!rows.length) {
+        throw new Error("No valid movie rows were found in the CSV.");
+      }
+
+      const result = await uploadMovieRows(rows);
+      if (ottCsvFileInput) {
+        ottCsvFileInput.value = "";
+      }
+
+      if (!result.insertedCount) {
+        setStatus(ottCsvStatus, "CSV checked successfully. All movies already exist, so no new rows were added.");
+      } else {
+        setStatus(
+          ottCsvStatus,
+          `CSV uploaded successfully. ${result.insertedCount} new movie row(s) added.`
+        );
+      }
+      await loadMovies();
+    } catch (error) {
+      console.error("CSV upload error:", error);
+      setStatus(
+        ottCsvStatus,
+        error?.message || "Unable to upload the CSV file. Please check the file and try again.",
+        true
+      );
+    } finally {
+      setButtonLoading(
+        ottUploadButton,
+        ottUploadButtonText,
+        ottUploadButtonSpinner,
+        false,
+        "Upload CSV",
+        "Uploading..."
+      );
+    }
   });
 }
 

@@ -6,7 +6,7 @@
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://uhimmowvkrmdbpniveps.supabase.co; font-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests"
+      content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; connect-src 'self' https://uhimmowvkrmdbpniveps.supabase.co https://cdn.jsdelivr.net; font-src 'self' data: https://fonts.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests"
     />
     <meta
       name="description"
@@ -168,7 +168,7 @@
 
                 <p id="movie-form-status" class="admin-status" hidden aria-live="polite"></p>
 
-                <form id="movie-form" class="admin-form">
+              <form id="movie-form" class="admin-form">
                   <div class="contact-field">
                     <label class="contact-label" for="movie-name">Movie Name</label>
                     <input
@@ -222,12 +222,45 @@
                     />
                   </div>
 
-                  <button type="submit" class="contact-submit" id="movie-submit-button">
-                    <span class="contact-submit__text">Add Movie</span>
+                <button type="submit" class="contact-submit" id="movie-submit-button">
+                  <span class="contact-submit__text">Add Movie</span>
+                  <span class="contact-submit__spinner" hidden aria-hidden="true"></span>
+                </button>
+              </form>
+
+              <div class="admin-import-export">
+                <div class="admin-import-export__header">
+                  <h4>CSV tools</h4>
+                  <p>
+                    Download the current movie list as CSV, or upload a CSV with these columns:
+                    id, movie_name, digital_release_date, streaming_partner, category, language.
+                  </p>
+                </div>
+
+                <p id="ott-csv-status" class="admin-status" hidden aria-live="polite"></p>
+
+                <div class="admin-import-export__actions">
+                  <button type="button" class="submission-card__button" id="ott-download-button">
+                    Download CSV
+                  </button>
+                </div>
+
+                <div class="admin-import-export__upload">
+                  <label class="contact-label" for="ott-csv-file">Bulk upload CSV</label>
+                  <input
+                    class="contact-input"
+                    type="file"
+                    id="ott-csv-file"
+                    name="ott_csv_file"
+                    accept=".csv,text/csv"
+                  />
+                  <button type="button" class="contact-submit" id="ott-upload-button">
+                    <span class="contact-submit__text">Upload CSV</span>
                     <span class="contact-submit__spinner" hidden aria-hidden="true"></span>
                   </button>
-                </form>
+                </div>
               </div>
+            </div>
 
               <div class="admin-panel">
                 <div class="admin-submissions__header">

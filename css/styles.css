@@ -966,6 +966,35 @@ html[data-homepage-mode="ott_only"] .site-footer__copy {
   color: #4b5563;
 }
 
+.release-table-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.release-table-toolbar__label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+.release-table-toolbar__select {
+  min-height: 2.75rem;
+  padding: 0.7rem 0.95rem;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  border-radius: 999px;
+  background: #ffffff;
+  color: #0f172a;
+  font: inherit;
+}
+
+.release-table-toolbar__select:focus-visible {
+  outline: 2px solid rgba(129, 140, 248, 0.9);
+  outline-offset: 2px;
+}
+
 .release-table-wrapper {
   overflow-x: auto;
   background: #fff;
@@ -1009,6 +1038,11 @@ html[data-homepage-mode="ott_only"] .site-footer__copy {
 }
 
 @media (max-width: 60rem) {
+  .release-table-toolbar {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
   .release-table-wrapper {
     padding: 0.9rem;
   }
@@ -1517,6 +1551,37 @@ html[data-homepage-mode="ott_only"] .site-footer__copy {
 .admin-form {
   display: grid;
   gap: 1rem;
+}
+
+.admin-import-export {
+  margin-top: 1.5rem;
+  padding-top: 1.35rem;
+  border-top: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.admin-import-export__header {
+  margin-bottom: 1rem;
+}
+
+.admin-import-export__header h4 {
+  margin: 0 0 0.4rem;
+  font-size: 1rem;
+  color: #111827;
+}
+
+.admin-import-export__header p {
+  margin: 0;
+  color: #4b5563;
+  line-height: 1.7;
+}
+
+.admin-import-export__actions {
+  margin-bottom: 1rem;
+}
+
+.admin-import-export__upload {
+  display: grid;
+  gap: 0.75rem;
 }
 
 .admin-dashboard__header {

@@ -5,8 +5,6 @@ const submitButton = document.getElementById("contact-submit-button");
 const submitButtonText = submitButton?.querySelector(".contact-submit__text");
 const submitButtonSpinner = submitButton?.querySelector(".contact-submit__spinner");
 
-const SUPABASE_URL = window.SUPABASE_URL;
-const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY;
 const TABLE_NAME = "contact_submissions";
 
 function setLoading(isLoading) {
@@ -52,7 +50,7 @@ function initFormState() {
 initFormState();
 
 if (contactForm && contactSuccess) {
-  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const supabaseClient = window.getSupabaseClient();
 
   contactForm.addEventListener("submit", async (event) => {
     event.preventDefault();
