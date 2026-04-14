@@ -8,7 +8,56 @@
       http-equiv="Content-Security-Policy"
       content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; connect-src 'self' https://uhimmowvkrmdbpniveps.supabase.co https://cdn.jsdelivr.net; font-src 'self' data: https://fonts.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests"
     />
-    <meta name="description" content="OTT Movies — Telugu movie OTT releases and streaming dates" />
+    <meta name="description" content="Discover upcoming Telugu OTT release dates, platform partners, and streaming availability for Telugu movies." />
+    <meta name="keywords" content="Telugu OTT releases, OTT movies, streaming dates, Netflix Telugu, Aha Telugu, Prime Video Telugu, Telugu streaming schedule" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="" />
+    <meta property="og:title" content="OTT Movies | Srinivas" />
+    <meta property="og:description" content="Discover upcoming Telugu OTT release dates, platform partners, and streaming availability for Telugu movies." />
+    <meta property="og:image" content="images/ott-hero-banner.png" />
+    <meta property="og:url" content="" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Srinivas OTT Movies" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="OTT Movies | Srinivas" />
+    <meta name="twitter:description" content="Discover upcoming Telugu OTT release dates, platform partners, and streaming availability for Telugu movies." />
+    <meta name="twitter:image" content="images/ott-hero-banner.png" />
+    <meta name="twitter:site" content="@Srinivas" />
+    <meta name="twitter:creator" content="@Srinivas" />
+    <script>
+      (function () {
+        var currentUrl = window.location.href.replace(/\/$/, "");
+        var canonical = document.querySelector('link[rel="canonical"]');
+        var ogUrl = document.querySelector('meta[property="og:url"]');
+        var jsonLd = document.getElementById("site-jsonld");
+        if (canonical) canonical.href = currentUrl;
+        if (ogUrl) ogUrl.content = currentUrl;
+        if (jsonLd && jsonLd.textContent) {
+          try {
+            var data = JSON.parse(jsonLd.textContent);
+            data.url = currentUrl;
+            jsonLd.textContent = JSON.stringify(data, null, 2);
+          } catch (e) {}
+        }
+      })();
+    </script>
+    <script type="application/ld+json" id="site-jsonld">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Srinivas OTT Movies",
+        "url": "",
+        "description": "Discover upcoming Telugu OTT release dates, platform partners, and streaming availability for Telugu movies."
+      }
+    </script>
+    <script type="application/ld+json" id="ott-jsonld">
+      {
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        "name": "Latest Telugu OTT Releases",
+        "itemListElement": []
+      }
+    </script>
     <title>OTT Movies | Srinivas</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ctext x='50%25' y='50%25' dy='.35em' text-anchor='middle' font-size='12'%3E%F0%9F%8E%A5%3C/text%3E%3C/svg%3E" />
     <script src="js/site-settings-init.js"></script>
@@ -46,41 +95,77 @@
       <div class="nav-backdrop" aria-hidden="true"></div>
     </header>
 
-    <main class="page-projects">
-      <div class="projects-page-inner">
-        <header class="projects-page-header">
-          <h1>Upcoming Telugu Movie OTT Rights &amp; OTT Release Dates 2026</h1>
-          <p class="projects-page-lede">
-            A clean, responsive release schedule for Telugu movies and series coming to streaming
-            platforms in 2026.
-          </p>
-        </header>
-
-        <div class="release-table-toolbar">
-          <label class="release-table-toolbar__label" for="ott-date-sort">Sort by date</label>
-          <select class="release-table-toolbar__select" id="ott-date-sort" name="ott-date-sort">
-            <option value="desc">Newest first</option>
-            <option value="asc">Oldest first</option>
-          </select>
+    <main class="page-ott">
+      <section class="ott-hero">
+         <p class="eyebrow">Telugu OTT releases</p>
+        <div class="ott-hero__visual">
+          <img src="images/ott-hero-banner.png" alt="Telugu OTT hero banner" class="hero-image" loading="lazy" />
         </div>
+        <div class="ott-hero__panel">
+         
+          <h1>Premium OTT platform for Telugu movie streaming launches</h1>
+          <p class="ott-hero__tagline">
+            Discover upcoming OTT release dates, platform rights, and premium launch highlights with a
+            sleek dark interface built for streaming enthusiasts.
+          </p>
+        </div>
+      </section>
 
-        <p id="ott-movies-status" class="admin-status" hidden aria-live="polite"></p>
-        <div id="ott-movies-loading" class="admin-loading" hidden>Loading OTT releases...</div>
-
-        <div class="release-table-wrapper">
-          <table class="release-table">
+      <section class="ott-section ott-table-section">
+        <div class="section-heading">
+          <p class="eyebrow">All releases</p>
+          <h2>Upcoming Telugu OTT launches</h2>
+        </div>
+        <div class="ott-table-filters">
+          <div class="ott-filter-buttons">
+            <button data-platform-filter="all" class="ott-filter-button is-active">All platforms</button>
+            <button data-platform-filter="Netflix" class="ott-filter-button">Netflix</button>
+            <button data-platform-filter="Aha" class="ott-filter-button">Aha</button>
+            <button data-platform-filter="Prime Video" class="ott-filter-button">Prime Video</button>
+          </div>
+          <div class="ott-filter-mobile">
+            <label for="ott-platform-select" class="ott-filter-label">Platform</label>
+            <select id="ott-platform-select" name="ott-platform-select" class="ott-select">
+              <option value="all">All platforms</option>
+              <option value="Netflix">Netflix</option>
+              <option value="Aha">Aha</option>
+              <option value="Prime Video">Prime Video</option>
+            </select>
+          </div>
+          <div class="ott-filter-actions">
+            <label for="ott-date-sort" class="ott-filter-label">Sort by date</label>
+            <select id="ott-date-sort" name="ott-date-sort" class="ott-select">
+              <option value="desc">Newest first</option>
+              <option value="asc">Oldest first</option>
+            </select>
+            <span id="ott-movie-count" class="ott-movie-count">Loading movies...</span>
+          </div>
+        </div>
+        <div class="ott-table-wrap">
+          <table class="ott-movies-table">
             <thead>
               <tr>
-                <th scope="col">Movie</th>
-                <th scope="col">Digital Release Date</th>
-                <th scope="col">Online Streaming Partner</th>
-                <th scope="col">Category</th>
+                <th>Movie</th>
+                <th>Release date</th>
+                <th>Platform</th>
+                <th>Language</th>
+                <th>Category</th>
               </tr>
             </thead>
             <tbody id="ott-movies-table-body"></tbody>
           </table>
         </div>
-      </div>
+        <p id="ott-movies-status" class="admin-status" hidden aria-live="polite"></p>
+        <div id="ott-movies-loading" class="admin-loading" hidden>Loading OTT releases...</div>
+      </section>
+
+      <section class="ott-section ott-trending">
+        <div class="section-heading">
+          <p class="eyebrow">Trending</p>
+          <h2>Buzzing Telugu OTT premieres</h2>
+        </div>
+        <div class="ott-trending-carousel" id="ott-trending-list" aria-label="Trending OTT releases"></div>
+      </section>
     </main>
 
     <footer class="site-footer">
