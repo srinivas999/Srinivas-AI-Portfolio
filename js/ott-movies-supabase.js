@@ -3,6 +3,7 @@ const ottTrendingList = document.getElementById("ott-trending-list");
 const ottMoviesStatus = document.getElementById("ott-movies-status");
 const ottMoviesLoading = document.getElementById("ott-movies-loading");
 const ottDateSort = document.getElementById("ott-date-sort");
+const ottPlatformSelect = document.getElementById("ott-platform-select");
 const ottMovieCount = document.getElementById("ott-movie-count");
 const ottFilters = Array.from(document.querySelectorAll("[data-platform-filter]"));
 
@@ -161,6 +162,10 @@ function updateFilters() {
   ottFilters.forEach((button) => {
     button.classList.toggle("is-active", button.dataset.platformFilter === selectedPlatform);
   });
+
+  if (ottPlatformSelect) {
+    ottPlatformSelect.value = selectedPlatform;
+  }
 }
 
 function applyFilters() {
@@ -231,6 +236,14 @@ ottFilters.forEach((button) => {
     applyFilters();
   });
 });
+
+if (ottPlatformSelect) {
+  ottPlatformSelect.addEventListener("change", () => {
+    selectedPlatform = ottPlatformSelect.value || "all";
+    updateFilters();
+    applyFilters();
+  });
+}
 
 if (ottDateSort) {
   ottDateSort.addEventListener("change", applyFilters);

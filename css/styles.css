@@ -2046,6 +2046,20 @@ html[data-hide-contact="true"] #contact {
   min-width: 220px;
 }
 
+.ott-filter-mobile {
+  display: none;
+  width: 100%;
+}
+
+.ott-filter-mobile .ott-filter-label {
+  display: block;
+  margin-bottom: 0.45rem;
+}
+
+.ott-filter-mobile .ott-select {
+  width: 100%;
+}
+
 .ott-hero__visual {
   position: relative;
   min-height: 360px;
@@ -2349,7 +2363,12 @@ html[data-hide-contact="true"] #contact {
     width: 100%;
   }
 
+  .ott-filter-mobile {
+    display: block;
+  }
+
   .ott-filter-buttons {
+    display: none;
     justify-content: stretch;
   }
 
