@@ -26,6 +26,7 @@
     background-color 0.22s ease, color 0.22s ease;
   --touch-min: 2.75rem;
   --bp-mobile-nav: 767.98px;
+  --page-max-width: 94rem;
   --color-bg: #eff6ff;
   --color-surface: #ffffff;
   --color-surface-soft: #eef2ff;
@@ -59,7 +60,7 @@ body {
   font-size: var(--text-body);
   line-height: var(--leading-body);
   color: var(--color-text);
-  background-color: var(--color-bg);
+  background-color: #ffffff;
 }
 
 img {
@@ -98,7 +99,7 @@ h3 {
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
-  max-width: 72rem;
+  max-width: var(--page-max-width);
   margin: 0 auto;
   padding: 0.625rem 1.25rem;
 }
@@ -307,40 +308,10 @@ h3 {
     font-size: 1rem;
   }
 
-  .main-inner,
-  .about-page-inner,
-  .projects-page-inner,
-  .contact-page-inner,
-  .skills,
-  .hero,
-  .site-footer {
+  .main-inner {
     padding-left: 1rem;
     padding-right: 1rem;
   }
-
-  .hero__inner,
-  .about-intro__body,
-  .projects-page-header,
-  .contact-page-header,
-  .about-page-inner,
-  .projects-page-inner,
-  .contact-page-inner {
-    max-width: 100%;
-  }
-
-  .nav-links a {
-    border-radius: 12px;
-  }
-
-  .ott-filter-button,
-  .ott-select,
-  .release-table-toolbar__select,
-  .project-card__cta,
-  .contact-submit,
-  .admin-tab-button {
-    min-height: var(--touch-min);
-  }
-
   .about-page-inner {
     padding-left: 1.15rem;
     padding-right: 1.15rem;
@@ -629,7 +600,7 @@ main {
 }
 
 .site-footer__inner {
-  max-width: 72rem;
+ max-width: var(--page-max-width);
   margin: 0 auto;
 }
 
@@ -991,7 +962,7 @@ html[data-homepage-mode="ott_only"] .site-footer__copy {
 }
 
 .projects-page-inner {
-  max-width: 72rem;
+  max-width: var(--page-max-width);
   margin: 0 auto;
   padding: var(--space-section-y-tight) 1.5rem var(--space-section-y);
 }
@@ -1925,18 +1896,19 @@ html[data-hide-contact="true"] #contact {
 .ott-hero,
 .ott-section {
   padding: 0.6rem clamp(0.75rem, 3vw, 1rem);
+  width: 100%;
+  max-width: var(--page-max-width);
+  margin: 0 auto;
 }
 
 .ott-hero {
   color: #0f172a;
   display: grid;
-  grid-template-columns: minmax(220px, 30%) minmax(0, 70%);
+  grid-template-columns: minmax(220px, 30%) minmax(0, 1fr);
   gap: 2rem;
   align-items: center;
   background: #ffffff;
   border-radius: 28px;
-  padding: 2rem;
-  margin-bottom: 1.25rem;
   box-shadow: 0 24px 80px rgba(15, 23, 42, 0.08);
 }
 
@@ -1957,6 +1929,8 @@ html[data-hide-contact="true"] #contact {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: flex-start;
+  gap: 1.25rem;
 }
 
 .hero-image {
@@ -1981,7 +1955,7 @@ html[data-hide-contact="true"] #contact {
 
 .ott-hero h1 {
   margin: 0;
-  font-size: clamp(2rem, 3vw, 3rem);
+  font-size: clamp(2rem, 4vw, 3rem);
   line-height: 1.04;
   letter-spacing: -0.04em;
   color: #0f172a;
@@ -2004,7 +1978,7 @@ html[data-hide-contact="true"] #contact {
   max-width: 34rem;
   color: #475569;
   line-height: 1.8;
-  font-size: 1.03rem;
+  font-size: clamp(0.97rem, 1.4vw, 1.03rem);
 }
 
 .ott-hero__actions {
@@ -2282,10 +2256,39 @@ html[data-hide-contact="true"] #contact {
 
   .ott-hero {
     padding: 1.5rem 1rem;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+
+  .eyebrow {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
   }
 
   .ott-hero__visual {
     min-height: 240px;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .ott-hero__panel {
+    grid-column: 1;
+    width: 100%;
+    align-items: center;
+    text-align: center;
+    padding-top: 0.75rem;
+  }
+
+  .ott-hero h1 {
+    font-size: clamp(1.9rem, 6vw, 2.6rem);
+  }
+
+  .ott-hero__tagline {
+    max-width: 100%;
+    margin-top: 1rem;
+    font-size: clamp(0.95rem, 2.4vw, 1.05rem);
+    text-align: center;
   }
 
   .ott-table-wrap {
@@ -2300,20 +2303,38 @@ html[data-hide-contact="true"] #contact {
 @media (max-width: 640px) {
   .ott-hero {
     padding: 1.25rem 1rem;
+    grid-template-columns: 1fr;
+    align-items: flex-start;
+    gap: 1.75rem;
+  }
+
+  .eyebrow {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
   }
 
   .ott-hero__visual {
-    min-height: 220px;
+    min-height: 240px;
+    width: 100%;
   }
 
   .ott-hero__panel {
-    align-items: flex-start;
-    text-align: left;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    padding-top: 0.75rem;
+  }
+
+  .ott-hero__panel h1 {
+    font-size: clamp(1.75rem, 8vw, 2.4rem);
   }
 
   .ott-hero__tagline {
     max-width: 100%;
-    margin-top: 1rem;
+    margin-top: 0.85rem;
+    font-size: clamp(0.95rem, 2.4vw, 1.05rem);
+    text-align: center;
   }
 
   .ott-hero__actions,
@@ -2357,8 +2378,6 @@ html[data-hide-contact="true"] #contact {
   .ott-movies-table th,
   .ott-movies-table td {
     padding: 0.85rem 0.9rem;
-    white-space: normal;
-    word-break: break-word;
   }
 
   .ott-movies-table th {
