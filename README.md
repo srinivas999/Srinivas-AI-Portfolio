@@ -9,7 +9,6 @@ The project also includes Supabase integration for storing contact form submissi
 - Portfolio landing page with sections for about, projects, and contact
 - Contact form that submits user data to Supabase
 - Admin interface to review contact submissions and mark them as read
-- Supabase config stored in `supabase-config.js`
 - Responsive layout and interactive navigation
 
 ## Files
@@ -23,13 +22,16 @@ The project also includes Supabase integration for storing contact form submissi
 - `js/script.js` — shared UI behavior and navigation
 - `js/contact-supabase.js` — Supabase contact form submission logic
 - `js/admin.js` — Supabase admin fetch and update logic
-- `supabase-config.js` — Supabase project URL and anon key
+- `supabase-config.example.js` — local Supabase config template
 
 ## Setup
 
 1. Open the project in a code editor.
-2. Replace the placeholder values in `supabase-config.js` with your Supabase project URL and anon key.
-3. Serve the site using a local HTTP server for best compatibility (recommended).
+2. Copy `supabase-config.example.js` to `supabase-config.js`.
+3. Replace the placeholder values in `supabase-config.js` with your Supabase project URL and anon key.
+4. Serve the site using a local HTTP server for best compatibility (recommended).
+
+> `supabase-config.js` is ignored by Git and should not be committed. Deployments use GitHub Secrets to generate this file.
 
 ### Example local server commands
 

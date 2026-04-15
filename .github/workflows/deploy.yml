@@ -26,10 +26,9 @@ jobs:
           window.SUPABASE_ANON_KEY="${{ secrets.SUPABASE_ANON_KEY }}"
           EOF
 
-      - name: Show generated config
+      - name: Show deploy folder
         run: |
           ls -la deploy
-          cat deploy/supabase-config.js
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
