@@ -485,12 +485,19 @@ function applySiteSettingsToForm(settings) {
   const showAbout = document.getElementById("setting-show-about");
   const showProjects = document.getElementById("setting-show-projects");
   const showContact = document.getElementById("setting-show-contact");
+  const siteUpdateDate = document.getElementById("site-update-date");
 
   if (homepageMode) homepageMode.value = settings.homepage_mode || "portfolio";
   if (showHome) showHome.checked = settings.show_home !== false;
   if (showAbout) showAbout.checked = settings.show_about !== false;
   if (showProjects) showProjects.checked = settings.show_projects !== false;
   if (showContact) showContact.checked = settings.show_contact !== false;
+
+  const localSettingsRaw = window.localStorage.getItem(SITE_SETTINGS_STORAGE_KEY);
+  const localSettings = localSettingsRaw ? JSON.parse(localSettingsRaw) : {};
+  if (siteUpdateDate) {
+    siteUpdateDate.value = settings.site_update_date || localSettings.site_update_date || "";
+  }
 }
 
 function cacheSiteSettings(settings) {
@@ -803,6 +810,7 @@ if (siteSettingsForm) {
       "Saving..."
     );
 
+    const siteUpdateDate = String(document.getElementById("site-update-date")?.value || "").trim();
     const payload = {
       id: SITE_SETTINGS_ROW_ID,
       homepage_mode: document.getElementById("homepage-mode")?.value || "portfolio",
@@ -810,6 +818,7 @@ if (siteSettingsForm) {
       show_about: Boolean(document.getElementById("setting-show-about")?.checked),
       show_projects: Boolean(document.getElementById("setting-show-projects")?.checked),
       show_contact: Boolean(document.getElementById("setting-show-contact")?.checked),
+      site_update_date: siteUpdateDate || null,
     };
 
     const { error } = await supabaseClient
@@ -831,8 +840,14 @@ if (siteSettingsForm) {
       return;
     }
 
-    cacheSiteSettings(payload);
-    setStatus(siteSettingsStatus, "Site settings saved successfully.");
+    const cachePayload = { ...payload };
+    cacheSiteSettings(cachePayload);
+
+    setStatus(
+      siteSettingsStatus,
+      "Site settings saved successfully.",
+      false
+    );
   });
 }
 

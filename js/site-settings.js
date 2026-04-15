@@ -191,7 +191,16 @@
     }
 
     try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      const localRaw = window.localStorage.getItem(STORAGE_KEY);
+      const localSettings = localRaw ? JSON.parse(localRaw) : {};
+      const mergedSettings = {
+        ...data,
+        site_update_date: data.site_update_date ?? localSettings.site_update_date,
+      };
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(mergedSettings));
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent("siteSettingsLoaded", { detail: mergedSettings }));
+      }
     } catch (storageError) {
       console.error("Site settings cache error:", storageError);
     }
