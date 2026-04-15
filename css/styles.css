@@ -1905,7 +1905,7 @@ html[data-hide-contact="true"] #contact {
   color: #0f172a;
   display: grid;
   grid-template-columns: minmax(220px, 30%) minmax(0, 1fr);
-  gap: 2rem;
+  gap: 1.5rem;
   align-items: center;
   background: #ffffff;
   border-radius: 28px;
@@ -1915,7 +1915,7 @@ html[data-hide-contact="true"] #contact {
 .ott-hero__visual {
   grid-column: 1;
   position: relative;
-  min-height: 320px;
+  min-height: 190px;
   display: grid;
   place-items: center;
   border-radius: 24px;
@@ -1930,7 +1930,7 @@ html[data-hide-contact="true"] #contact {
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  gap: 1.25rem;
+  gap: 1rem;
 }
 
 .hero-image {
@@ -1992,7 +1992,7 @@ html[data-hide-contact="true"] #contact {
 .ott-hero__tagline,
 .ott-trending-card__body p,
 .ott-movie-card__meta {
-  margin: 1.25rem 0 0;
+  margin: 1rem 0 0;
   max-width: 34rem;
   color: #475569;
   line-height: 1.8;
@@ -2003,7 +2003,7 @@ html[data-hide-contact="true"] #contact {
   display: flex;
   flex-wrap: wrap;
   gap: 0.9rem;
-  margin-top: 2rem;
+  margin-top: 1.5rem;
 }
 
 .ott-filter-button {
@@ -2080,7 +2080,7 @@ html[data-hide-contact="true"] #contact {
 
 .ott-hero__visual {
   position: relative;
-  min-height: 360px;
+  min-height: 190px;
   display: grid;
   place-items: center;
   border-radius: 24px;
@@ -2303,7 +2303,7 @@ html[data-hide-contact="true"] #contact {
   }
 
   .ott-hero__visual {
-    min-height: 240px;
+    min-height: 130px;
     width: 100%;
     max-width: 100%;
   }
@@ -2351,7 +2351,7 @@ html[data-hide-contact="true"] #contact {
   }
 
   .ott-hero__visual {
-    min-height: 240px;
+    min-height: 130px;
     width: 100%;
   }
 
