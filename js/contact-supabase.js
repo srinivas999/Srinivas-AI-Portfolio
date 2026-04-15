@@ -86,6 +86,8 @@ if (contactForm && contactSuccess) {
     event.preventDefault();
     if (!contactForm.reportValidity()) return;
 
+    window.trackAnalyticsEvent?.("submit", "Contact Form", "Contact page submit");
+
     clearStatus();
     contactSuccess.hidden = true;
     setLoading(true);
