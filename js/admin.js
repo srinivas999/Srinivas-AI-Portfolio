@@ -584,6 +584,7 @@ async function loadSiteSettings() {
 
 tabButtons.forEach((button) => {
   button.addEventListener("click", () => {
+    window.trackAnalyticsEvent?.("click", "Admin", `Admin tab: ${button.dataset.adminTabButton}`);
     setActiveTab(button.dataset.adminTabButton);
   });
 });
@@ -592,6 +593,8 @@ if (loginForm) {
   loginForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     if (!loginForm.reportValidity()) return;
+
+    window.trackAnalyticsEvent?.("sign_in", "Admin", "Admin login attempt");
 
     setStatus(authStatus, "");
     setButtonLoading(loginButton, loginButtonText, loginButtonSpinner, true, "Sign In", "Signing In...");
@@ -617,6 +620,8 @@ if (loginForm) {
 
 if (logoutButton) {
   logoutButton.addEventListener("click", async () => {
+    window.trackAnalyticsEvent?.("sign_out", "Admin", "Admin logout");
+
     setStatus(moviesStatus, "");
     setStatus(movieFormStatus, "");
     setStatus(contactAdminStatus, "");
@@ -634,6 +639,8 @@ if (movieForm) {
   movieForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     if (!movieForm.reportValidity()) return;
+
+    window.trackAnalyticsEvent?.("submit", "Admin Form", "Add movie");
 
     setStatus(movieFormStatus, "");
     setButtonLoading(movieSubmitButton, movieSubmitButtonText, movieSubmitButtonSpinner, true, "Add Movie", "Saving...");
@@ -668,6 +675,7 @@ if (movieForm) {
 
 if (ottDownloadButton) {
   ottDownloadButton.addEventListener("click", async () => {
+    window.trackAnalyticsEvent?.("download", "Admin", "OTT CSV export");
     setStatus(ottCsvStatus, "");
 
     if (!ottMoviesCache.length) {
@@ -720,6 +728,7 @@ if (ottDownloadButton) {
 
 if (ottUploadButton) {
   ottUploadButton.addEventListener("click", async () => {
+    window.trackAnalyticsEvent?.("upload", "Admin", "OTT CSV import");
     const file = ottCsvFileInput?.files?.[0];
     if (!file) {
       setStatus(ottCsvStatus, "Choose a CSV file before uploading.", true);
@@ -781,6 +790,8 @@ if (ottUploadButton) {
 if (siteSettingsForm) {
   siteSettingsForm.addEventListener("submit", async (event) => {
     event.preventDefault();
+
+    window.trackAnalyticsEvent?.("submit", "Admin Form", "Site settings");
 
     setStatus(siteSettingsStatus, "");
     setButtonLoading(

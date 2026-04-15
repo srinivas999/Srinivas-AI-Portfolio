@@ -367,6 +367,7 @@ function initializeOttMovies() {
   getOttFilters().forEach((button) => {
     button.addEventListener("click", () => {
       selectedPlatform = button.dataset.platformFilter || "all";
+      window.trackAnalyticsEvent?.("click", "OTT Filter", selectedPlatform);
       updateFilters();
       applyFilters();
     });
