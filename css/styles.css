@@ -1896,7 +1896,7 @@ html[data-hide-contact="true"] #contact {
 .ott-hero,
 .ott-section {
   padding: 0.6rem clamp(0.75rem, 3vw, 1rem);
-  width: 100%;
+  width: min(100%, var(--page-max-width));
   max-width: var(--page-max-width);
   margin: 0 auto;
 }
