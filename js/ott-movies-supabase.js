@@ -119,9 +119,9 @@ function normalizePlatform(value) {
 }
 
 const ottSeoJsonLd = document.getElementById("ott-jsonld");
-const defaultSeoTitle = "OTT Movies | Srinivas";
+const defaultSeoTitle = "Telugu OTT releases this week | OTT Movies";
 const defaultSeoDescription =
-  "Discover upcoming Telugu OTT release dates, platform partners, and streaming availability for Telugu movies.";
+  "Telugu OTT release schedule for upcoming Telugu OTT movies, streaming dates, and platform availability across Netflix, Aha, Prime Video, JioHotstar, Zee5, Sun NXT, and ETV Win.";
 const ottJsonLdDomain = "https://svteluguott.in/";
 
 function setMeta(selector, content) {
@@ -130,6 +130,55 @@ function setMeta(selector, content) {
   if (meta) {
     meta.setAttribute("content", content);
   }
+}
+
+function formatReleaseDate(value) {
+  if (!value) return "TBA";
+  const date = new Date(`${value}T00:00:00`);
+  if (Number.isNaN(date.getTime())) {
+    return value;
+  }
+  return date.toLocaleDateString(undefined, {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+}
+
+function createMovieRow(movie) {
+  const row = document.createElement("tr");
+  row.dataset.platform = movie.streaming_partner || "";
+  row.setAttribute("itemscope", "");
+  row.setAttribute("itemtype", "https://schema.org/Movie");
+
+  const nameCell = document.createElement("td");
+  nameCell.innerHTML = `<span itemprop="name">${movie.movie_name || "Untitled"}</span>`;
+
+  const dateCell = document.createElement("td");
+  const datePublished = movie.digital_release_date || "";
+  dateCell.innerHTML = `<time itemprop="datePublished" datetime="${datePublished}">${formatReleaseDate(movie.digital_release_date)}</time>`;
+
+  const partnerCell = document.createElement("td");
+  partnerCell.innerHTML = `<span>${movie.streaming_partner || "TBA"}</span>`;
+
+  const languageCell = document.createElement("td");
+  languageCell.innerHTML = `<span itemprop="inLanguage">${movie.language || "Telugu"}</span>`;
+
+  const categoryCell = document.createElement("td");
+  categoryCell.innerHTML = `<span itemprop="genre">${movie.category || "Film"}</span>`;
+
+  const metaDescription = document.createElement("meta");
+  metaDescription.setAttribute("itemprop", "description");
+  metaDescription.content = `${movie.movie_name || "Untitled"} on ${movie.streaming_partner || "OTT"} releases on ${formatReleaseDate(movie.digital_release_date)}.`;
+  row.appendChild(metaDescription);
+
+  row.appendChild(nameCell);
+  row.appendChild(dateCell);
+  row.appendChild(partnerCell);
+  row.appendChild(languageCell);
+  row.appendChild(categoryCell);
+
+  return row;
 }
 
 function updateSeoTags(filteredMovies) {
@@ -153,65 +202,31 @@ function updateSeoTags(filteredMovies) {
   setMeta('meta[property="og:url"]', currentUrl);
 
   if (ottSeoJsonLd) {
-    const items = filteredMovies.slice(0, 10).map((movieEntry) => ({
-      "@type": "Movie",
-      name: movieEntry.movie_name || "Untitled",
-      datePublished: movieEntry.digital_release_date || "",
-      sameAs: ottJsonLdDomain,
+    const items = filteredMovies.slice(0, 10).map((movieEntry, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      item: {
+        "@type": "Movie",
+        name: movieEntry.movie_name || "Untitled",
+        datePublished: movieEntry.digital_release_date || "",
+        description: movieEntry.streaming_partner
+          ? `Streaming on ${movieEntry.streaming_partner}`
+          : "Telugu OTT movie release",
+        url: currentUrl,
+      },
     }));
 
     ottSeoJsonLd.textContent = JSON.stringify(
       {
         "@context": "https://schema.org",
         "@type": "ItemList",
-        "name": "Latest Telugu OTT Releases",
+        name: "Latest Telugu OTT Releases",
         itemListElement: items,
       },
       null,
       2
     );
   }
-}
-
-function formatReleaseDate(value) {
-  if (!value) return "TBA";
-  const date = new Date(`${value}T00:00:00`);
-  if (Number.isNaN(date.getTime())) {
-    return value;
-  }
-  return date.toLocaleDateString(undefined, {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  });
-}
-
-function createMovieRow(movie) {
-  const row = document.createElement("tr");
-  row.dataset.platform = movie.streaming_partner || "";
-
-  const nameCell = document.createElement("td");
-  nameCell.textContent = movie.movie_name || "Untitled";
-
-  const dateCell = document.createElement("td");
-  dateCell.textContent = formatReleaseDate(movie.digital_release_date);
-
-  const partnerCell = document.createElement("td");
-  partnerCell.textContent = movie.streaming_partner || "TBA";
-
-  const languageCell = document.createElement("td");
-  languageCell.textContent = movie.language || "Telugu";
-
-  const categoryCell = document.createElement("td");
-  categoryCell.textContent = movie.category || "Film";
-
-  row.appendChild(nameCell);
-  row.appendChild(dateCell);
-  row.appendChild(partnerCell);
-  row.appendChild(languageCell);
-  row.appendChild(categoryCell);
-
-  return row;
 }
 
 function sortMovies(entries) {

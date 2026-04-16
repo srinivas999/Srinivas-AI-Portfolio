@@ -7,10 +7,24 @@
       <img src="images/ott-hero-banner.png" alt="Telugu OTT hero banner" class="hero-image" loading="lazy" />
     </div>
     <div class="ott-hero__panel">
-      <h1>Premium OTT platform for Telugu movie streaming launches</h1>
+      <h1>Telugu OTT releases this week</h1>
       <p class="ott-hero__tagline">
-        Discover upcoming OTT release dates, platform rights, and premium launch highlights with a
-        sleek dark interface built for streaming enthusiasts.
+        Find upcoming Telugu OTT movies on Netflix, Aha, Prime Video, JioHotstar, Zee5, Sun NXT and ETV Win with release dates and platform availability.
+      </p>
+    </div>
+  </section>
+
+  <section class="ott-section ott-seo-copy" itemscope itemtype="https://schema.org/Article">
+    <div class="section-heading">
+      <p class="eyebrow">OTT guide</p>
+      <h2 itemprop="headline">Upcoming OTT movies Telugu April 2026</h2>
+    </div>
+    <div itemprop="articleBody">
+      <p>
+        This page is your weekly Telugu OTT schedule for new streaming releases, verified digital release dates, and platform rights. Use it to track the latest Telugu OTT premieres on Netflix, Aha, Prime Video, JioHotstar, Zee5, Sun NXT, and ETV Win.
+      </p>
+      <p>
+        If you're searching for "Telugu OTT releases this week" or "upcoming OTT movies Telugu April 2026," this page helps you find the latest Telugu streaming launch dates and movie details in one place.
       </p>
     </div>
   </section>
